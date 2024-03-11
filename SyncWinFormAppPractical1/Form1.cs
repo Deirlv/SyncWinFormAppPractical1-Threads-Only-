@@ -18,12 +18,29 @@ namespace SyncWinFormAppPractical1
         }
         public void PrintRange(object r)
         {
-            var range = (Range)r;
-
-            for (int i = range.Start.Value; i < range.End.Value; i++)
+            if(r is Range)
             {
-                dataGridView1.Rows.Add(i, Thread.CurrentThread.Name);
-                Thread.Sleep(500);
+                var range = (Range)r;
+
+                for (int i = range.Start.Value; i < range.End.Value; i++)
+                {
+                    if(dataGridView1.InvokeRequired)
+                    {
+                        dataGridView1.Invoke(new MethodInvoker(delegate
+                        {
+                            dataGridView1.Rows.Add(i, Thread.CurrentThread.Name);
+                        }));
+                    }
+                    else
+                    {
+                        dataGridView1.Rows.Add(i, Thread.CurrentThread.Name);
+                    }
+                    Thread.Sleep(500);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Error");
             }
         }
         private void buttonStart_Click(object sender, EventArgs e)
